@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/bootstrap/bootstrap3/css/bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/bootstrap-treeview/bootstrap-treeview.min.css}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/bootStrap-addTabs/bootstrap.addtabs.css}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/bootstrap-table/bootstrap-table.css}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css}"/>
+    <script th:src="@{/bootstrap/jquery-1.11.3.min.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap3/js/bootstrap.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-treeview/bootstrap-treeview.min.js}"></script>
+    <script th:src="@{/bootstrap/bootStrap-addTabs/bootstrap.addtabs.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-table/bootstrap-table.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-table/locale/bootstrap-table-zh-CN.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-bootbox/bootbox.all.min.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-bootbox/bootbox.locales.min.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-bootbox/bootbox.min.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js}"></script>
+</head>
+<body>
+<div class="form-group">
+    <div  class="col-sm-2">
+        <button onclick="openAddBookDialog()" type="button" class="btn btn-block btn-info glyphicon glyphicon-plus">新增</button>
+    </div>
+</div>
+<div class="form-group">
+    <div  class="col-sm-2">
+        <button onclick="openQwe()" type="button" class="btn btn-block btn-info glyphicon glyphicon-plus">降级</button>
+    </div>
+</div>
+<table id="userTable"></table>
+</body>
+<script>
+    $(function () {
+        initEvaluate();
+    })
+
+    function openAddBookDialog(){
+        bootbox.dialog({
+            title: '新增商品',
+            message:createContent('../page/toAddUserPage'),
+            size:'large',
+            buttons:{
+                cancel:{
+                    label:'<i class="glyphicon glyphicon-remove"></i>取消',
+                    className:'btn-danger',
+                    callback:function(){
+
+                    }
+                },
+                ok:{
+                    label:'<i class="glyphicon glyphicon-ok"></i>保存',
+                    className:'btn-success',
+                    callback:function(){
+                        saveGoods();
+                    }
+                }
+            }
+        })
+    }
+
+    var res;
+    function createContent(url){
+        $.ajax({
+            url:url,
+            async:false,
+            success:function(data){
+                res = data;
+            }
+        });
+        return res;
+    }
+
+    function initEvaluate() {
+        $("#userTable").bootstrapTable({
+            url: '../user/findUserList',
+            method: 'post',
+            contentType: 'application/x-www-form-urlencoded',//post请求按照表单方式
+            //toolbar:'#toolbar',
+            clickToSelect: true, //是否启用点击选中行
+            columns: [
+                {field: 'name', title: '姓名'},
+                {field: 'gender', title: '性别'},
+                {field: 'birthday', title: '生日'},
+                {field: 'typeName', title: '类型'},
+                {
+                    field: 'cz', title: '操作', formatter: function (value, row, index) {
+                        return '<a type=\"button\" class=\"btn btn-mini btn-primary\" href=\"javascript:xiangqingList(' + row.id + ')\">删除</a>';
+                    }
+                }
+            ]
+
+        })
+    }
+    function openQwe() {
+        $.post('../user/saveOrder', {}, function (data) {
+
+        });
+    }
+
+    function xiangqingList(id) {
+        bootbox.confirm("你确定要删除吗？", function (r) {
+            $.post('../user/deleteEsByid/'+id, {}, function (data) {
+                $("#userTable").bootstrapTable('refresh');
+            });
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/bootstrap/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/bootstrap-fileinput/css/fileinput.css}"/>
+    <script th:src="@{/bootstrap/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-fileinput/js/fileinput.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-fileinput/js/locales/zh.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap-fileinput/themes/gly/theme.js}"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <form id="carForm" class="form-horizontal">
+        <div class="form-group">
+
+            <label  class="col-sm-2 control-label">姓名</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="name">
+            </div>
+            <label  class="col-sm-2 control-label">性别</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="gender">
+            </div>
+            <label  class="col-sm-2 control-label">生日</label>
+            <div class="col-sm-4">
+                <input type="date" class="form-control" name="birthday">
+            </div>
+            <label  class="col-sm-2 control-label">类型</label>
+            <div class="col-sm-4">
+                <select id="typeSelect" name="typeId" class="form-control"></select>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script type="text/javascript">
+    $(function(){
+        initTable();
+    })
+
+
+    function saveGoods(){
+        $.ajax({
+            url:'../user/addUser',
+            type:'post',
+            data:$("#carForm").serialize(),
+            dataType:'json',
+            success:function(data){
+                initEvaluate();
+            }
+        })
+    }
+
+    function initTable(){
+        $.post('../user/findUserTypeList',{},function(data){
+            var html='<option value="-1">请选择</option>';
+            for (var i = 0; i < data.length; i++) {
+                html += "<option value='"+data[i].id+"'>"+data[i].name+"</option>";
+            }
+            $("#typeSelect").html(html);
+        })
+    }
+
+    $('.date').datetimepicker({
+        language: 'zh-CN',//显示中文
+        format: 'yyyy-mm-dd hh:ii:ss',//显示格式
+        minView: "month",//设置只显示到月份
+        initialDate: new Date(),//初始化当前日期
+        autoclose: true,//选中自动关闭
+        todayBtn: true//显示今日按钮
+    });
+</script>
+</html>
